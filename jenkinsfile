@@ -7,7 +7,7 @@ pipeline {
             steps {
                 sh '''
                 docker run -d --name flask_app -p 5000:5000 -v /var/run/docker.sock:/var/run/docker.sock ddriham/flask_app
-                docker run -d --name nginx --link flask_app:flask_app -p 80:80 ddriham/nginx_proxy
+                docker run -d --name nginx_proxy --link flask_app:flask_app -p 80:80 ddriham/nginx_proxy
                 sleep 10
                 '''
             }
