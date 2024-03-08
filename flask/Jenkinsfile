@@ -1,0 +1,31 @@
+node ('docker'){
+    stage('Clean Workspace') {
+        cleanWs()
+    }
+    
+    stage('Check out from Git') {
+    checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[credentialsId: 'git-creds', url: 'https://github.com/ddriham/flask_app.git']])
+}
+
+    stage('Build') {
+        sh "docker build -t ddriham/flask_app:${env.BUILD_NUMBER} ./flask/"
+    }
+
+    stage('Test') {
+        sh "docker run -d --name flask_app -p 5000:5000 -v /var/run/docker.sock:/var/run/docker.sock ddriham/flask_app:${env.BUILD_NUMBER}"
+        sh "sleep 5" 
+        sh "curl http://192.168.30.131:5000" 
+        sh "docker stop flask_app && docker rm flask_app"
+    }
+
+    stage('Push to DockerHub') {
+        withCredentials([usernamePassword(credentialsId: 'docker-hub', passwordVariable: 'pass', usernameVariable: 'user')]) {
+            sh "docker login -u $user -p $pass"
+            sh "docker tag ddriham/flask_app:${env.BUILD_NUMBER} ddriham/flask_app:latest"
+            sh "docker push ddriham/flask_app:${env.BUILD_NUMBER}"
+            sh "docker push ddriham/flask_app:latest"
+            sh "docker rmi ddriham/flask_app:${env.BUILD_NUMBER}"
+            sh "docker rmi ddriham/flask_app:latest"
+        }
+    }
+}
