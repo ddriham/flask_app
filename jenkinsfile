@@ -1,0 +1,57 @@
+pipeline {
+    agent {
+        label 'docker'
+    }
+    stages {
+        stage('Start Containers') {
+            steps {
+                sh '''
+                docker run -d --name flask_app -p 5000:5000 -v /var/run/docker.sock:/var/run/docker.sock ddriham/flask_app
+                docker run -d --name nginx --link flask_app:flask_app -p 80:80 ddriham/nginx_proxy
+                sleep 10
+                '''
+            }
+        }
+
+        stage('Verify Setup') {
+            steps {
+                script {
+                    def response = sh(script: "curl -s -o /dev/null -w '%{http_code}' http://192.168.30.131", returnStdout: true).trim()
+                    if(response != "200") {
+                        error "Failed to get a successful response from the Nginx container."
+                    } else {
+                        echo "The request has gone OK and finished successfully."
+                    }
+                }
+            }
+        }
+    }
+    post {
+        always {
+            sh '''
+            docker stop flask_app nginx
+            docker rm flask_app nginx
+            '''
+        }
+    }
+}
+
+
+
+
+
+        // stage('expose only http') {
+        //     steps {
+        //         sh '''
+                
+        //         sudo ufw allow 80/tcp
+        
+                
+        //         sudo ufw deny 5000/tcp
+        
+                
+        //         sudo ufw enable
+        //         '''
+
+        //     }
+        // }
