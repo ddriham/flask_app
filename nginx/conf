@@ -2,7 +2,7 @@ server {
     listen       80;
     server_name  localhost;
     location /{
-        proxy_pass   http://192.168.30.131:5000/flask;
+        proxy_pass   http://flask_app:5000/flask;
         proxy_set_header X-Real-IP $remote_addr; #the ip address of the client
         proxy_set_header X-Forwarded-Host $host; #domain_name or IP address (somthimes port?)
         proxy_set_header X-Forwarded-Port $server_port; #port
