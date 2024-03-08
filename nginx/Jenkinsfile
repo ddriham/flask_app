@@ -11,7 +11,7 @@ pipeline {
 
         stage('build') {
             steps {
-                sh 'docker build -t ddriham/nginx:${BUILD_NUMBER} ./nginx/'
+                sh 'docker build -t ddriham/nginx_proxy:${BUILD_NUMBER} ./nginx/'
             }
         }
 
@@ -25,15 +25,15 @@ pipeline {
 
         stage('push_dockerhub') {
             steps {
-                sh 'docker tag ddriham/nginx:${BUILD_NUMBER} ddriham/nginx:latest'
-                sh 'docker push ddriham/nginx:${BUILD_NUMBER}'
-                sh 'docker push ddriham/nginx:latest'
+                sh 'docker tag ddriham/nginx_proxy:${BUILD_NUMBER} ddriham/nginx:latest'
+                sh 'docker push ddriham/nginx_proxy:${BUILD_NUMBER}'
+                sh 'docker push ddriham/nginx_proxy:latest'
             }
         }
     }
     post {
         always {
-            sh 'docker rmi ddriham/nginx:${BUILD_NUMBER} ddriham/nginx:latest'
+            sh 'docker rmi ddriham/nginx_proxy:${BUILD_NUMBER} ddriham/nginx_proxy:latest'
         }
     }
 }
