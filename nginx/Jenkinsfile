@@ -25,7 +25,7 @@ pipeline {
 
         stage('push_dockerhub') {
             steps {
-                sh 'docker tag ddriham/nginx_proxy:${BUILD_NUMBER} ddriham/nginx:latest'
+                sh 'docker tag ddriham/nginx_proxy:${BUILD_NUMBER} ddriham/nginx_proxy:latest'
                 sh 'docker push ddriham/nginx_proxy:${BUILD_NUMBER}'
                 sh 'docker push ddriham/nginx_proxy:latest'
             }
