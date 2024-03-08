@@ -29,8 +29,8 @@ pipeline {
     post {
         always {
             sh '''
-            docker stop flask_app nginx
-            docker rm flask_app nginx
+            docker stop flask_app nginx_proxy
+            docker rm flask_app nginx_proxy
             '''
         }
     }
