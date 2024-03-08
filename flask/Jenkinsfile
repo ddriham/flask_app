@@ -14,7 +14,7 @@ node ('docker'){
     stage('Test') {
         sh "docker run -d --name flask_app -p 5000:5000 -v /var/run/docker.sock:/var/run/docker.sock ddriham/flask_app:${env.BUILD_NUMBER}"
         sh "sleep 5" 
-        sh "curl http://192.168.30.131:5000" 
+        sh "curl http://192.168.30.131:5000/flask" 
         sh "docker stop flask_app && docker rm flask_app"
     }
 
