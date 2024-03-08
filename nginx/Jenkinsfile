@@ -1,0 +1,39 @@
+pipeline {
+    agent {
+        label 'docker'
+    }
+    stages {
+        stage('checkout') {
+            steps {
+                checkout([$class: 'GitSCM', branches: [[name: '*/main']], userRemoteConfigs: [[credentialsId: 'git-creds', url: 'https://github.com/ddriham/flask_app.git']]])
+            }
+        }
+
+        stage('build') {
+            steps {
+                sh 'docker build -t ddriham/nginx:${BUILD_NUMBER} ./nginx/'
+            }
+        }
+
+        stage('login_dockerhub') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'docker-hub', passwordVariable: 'DOCKER_HUB_PASSWORD', usernameVariable: 'DOCKER_HUB_USER')]) {
+                    sh 'echo $DOCKER_HUB_PASSWORD | docker login --username $DOCKER_HUB_USER --password-stdin'
+                }
+            }
+        }
+
+        stage('push_dockerhub') {
+            steps {
+                sh 'docker tag ddriham/nginx:${BUILD_NUMBER} ddriham/nginx:latest'
+                sh 'docker push ddriham/nginx:${BUILD_NUMBER}'
+                sh 'docker push ddriham/nginx:latest'
+            }
+        }
+    }
+    post {
+        always {
+            sh 'docker rmi ddriham/nginx:${BUILD_NUMBER} ddriham/nginx:latest'
+        }
+    }
+}
