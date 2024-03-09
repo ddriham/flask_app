@@ -1,0 +1,50 @@
+pipelineJob('flask-list_docker') {
+    definition {
+        cpsScm {
+            scm {
+                git {
+                    remote {
+                        url('https://github.com/ddriham/flask_app.git')
+                        credentials('git-creds')
+                    }
+                    branches('*/main')
+                    scriptPath('flask/Jenkinsfile')
+                }
+            }
+        }
+    }
+}
+
+pipelineJob('nginx_proxy') {
+    definition {
+        cpsScm {
+            scm {
+                git {
+                    remote {
+                        url('https://github.com/ddriham/flask_app.git')
+                        credentials('git-creds')
+                    }
+                    branches('*/main')
+                    scriptPath('nginx/Jenkinsfile')
+                }
+            }
+        }
+    }
+}
+
+pipelineJob('run_test_falsk_nginx_proxy') {
+    definition {
+        cpsScm {
+            scm {
+                git {
+                    remote {
+                        url('https://github.com/ddriham/flask_app.git')
+                        credentials('git-creds')
+                    }
+                    branches('*/main')
+                    scriptPath('jenkinsfile')
+                }
+            }
+        }
+    }
+}
