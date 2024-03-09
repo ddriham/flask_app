@@ -1,5 +1,6 @@
 # flask_app
-simple flask app with nginx proxy
+simple flask app with nginx proxy.
+the flask container must be named flask_app.
 
 structure:
 
